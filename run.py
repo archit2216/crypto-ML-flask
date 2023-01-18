@@ -1,15 +1,26 @@
 from flask import Flask,render_template,request,jsonify
+from datetime import date,timedelta
 import pickle
 
-modelBTC=pickle.load(open('lr_modelBTC.pkl','rb'))
-modelXRP=pickle.load(open('lr_modelXRP.pkl','rb'))
-modelETH=pickle.load(open('lr_modelETH.pkl','rb'))
-modelDOGE=pickle.load(open('lr_modelDOGE.pkl','rb'))
-modelSOL=pickle.load(open('lr_modelSOL.pkl','rb'))
-modelXLM=pickle.load(open('lr_modelXLM.pkl','rb'))
-modelDOT=pickle.load(open('lr_modelDOT.pkl','rb'))
-modelADA=pickle.load(open('lr_modelADA.pkl','rb'))
-modelLINK=pickle.load(open('lr_modelLINK.pkl','rb'))
+with open('ARIMA_modelBTC1.pkl', 'rb') as file:
+    modelBTC=pickle.load(file)
+with open('ARIMA_modelETH.pkl','rb') as file:
+    modelETH=pickle.load(file)
+with open('ARIMA_modelDOGE.pkl','rb') as file:
+    modelDOGE=pickle.load(file)
+with open('ARIMA_modelXRP.pkl','rb') as file:
+    modelXRP=pickle.load(file)
+with open('ARIMA_modelSOL.pkl','rb') as file:
+    modelSOL=pickle.load(file)
+with open('ARIMA_modelADA.pkl','rb') as file:
+    modelADA=pickle.load(file)
+with open('ARIMA_modelXLM.pkl','rb') as file:
+    modelXLM=pickle.load(file)
+with open('ARIMA_modelDOT.pkl','rb') as file:
+    modelDOT=pickle.load(file)
+with open('ARIMA_modelLINK.pkl','rb') as file:
+    modelLINK=pickle.load(file)
+
 app=Flask(__name__)
 
 @app.route('/',methods=['GET','POST'])
@@ -18,30 +29,28 @@ def home():
     if request.method=='POST':
         user_input=request.form
         Coin=str(user_input.get('Coin'))
-        openVal=int(user_input.get('Open'))
-        high=int(user_input.get('High'))
-        low=int(user_input.get('Low'))
-        vol=int(user_input.get('Volume'))
+        start_date=date.today()-timedelta(1)
+        end_date=date.today()
         if Coin=='BTC': 
-            pred=modelBTC.predict([[openVal,high,low,vol]])
+            pred=modelBTC.predict(start=start_date,end=end_date)
         elif Coin=='XRP':
-            pred=modelXRP.predict([[openVal,high,low,vol]])
+            pred=modelXRP.predict(start=start_date,end=end_date)
         elif Coin=='ETH':
-            pred=modelETH.predict([[openVal,high,low,vol]])
+            pred=modelETH.predict(start=start_date,end=end_date)
         elif Coin=='DOGE':
-            pred=modelDOGE.predict([[openVal,high,low,vol]])
+            pred=modelDOGE.predict(start=start_date,end=end_date)
         elif Coin=='SOL':
-            pred=modelSOL.predict([[openVal,high,low,vol]])
+            pred=modelSOL.predict(start=start_date,end=end_date)
         elif Coin=='XLM':
-            pred=modelXLM.predict([[openVal,high,low,vol]])
+            pred=modelXLM.predict(start=start_date,end=end_date)
         elif Coin=='DOT':
-            pred=modelDOT.predict([[openVal,high,low,vol]])
+            pred=modelDOT.predict(start=start_date,end=end_date)
         elif Coin=='ADA':
-            pred=modelADA.predict([[openVal,high,low,vol]])
+            pred=modelADA.predict(start=start_date,end=end_date)
         elif Coin=='LINK':
-            pred=modelLINK.predict([[openVal,high,low,vol]])
+            pred=modelLINK.predict(start=start_date,end=end_date)
         else:
-            pred=modelBTC.predict([[openVal,high,low,vol]])
+            pred=modelETH.predict(start=start_date,end=end_date)
         return jsonify(pred[0])
     # return render_template('index.html',prediction=pred[0])
 
